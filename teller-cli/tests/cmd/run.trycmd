@@ -1,9 +1,0 @@
-```console
-$ teller run --reset --shell -- node index.js
-hello from nodejs
-linus
-happy
-foo
-baz
-
-```

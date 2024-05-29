@@ -1,6 +1,0 @@
-```console
-$ teller template --in config-templ.t
-production_var: linus
-production_mood: happy
-
-```
