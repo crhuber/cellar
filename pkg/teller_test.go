@@ -13,9 +13,9 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
-	"github.com/spectralops/teller/pkg/providers"
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
+	"github.com/crhuber/cellar/pkg/providers"
 )
 
 // implements both Providers and Provider interface, for testing return only itself.
@@ -75,7 +75,7 @@ func (im *InMemProvider) Meta() core.MetaInfo {
 	return core.MetaInfo{}
 }
 
-//nolint
+// nolint
 func init() {
 	inmemProviderMeta := core.MetaInfo{
 		Name:        "inmem-provider",
@@ -152,30 +152,30 @@ func getLogger() logging.Logger {
 	return logger
 }
 
-func TestNewTeller(t *testing.T) {
-	tlrfile := &TellerFile{
-		Project: "teller",
+func TestNewCellar(t *testing.T) {
+	clrfile := &CellarFile{
+		Project: "cellar",
 		Opts: map[string]string{
 			"foo": "bar",
 		},
 	}
-	cmd := []string{"teller", "show"}
+	cmd := []string{"cellar", "show"}
 	logger := getLogger()
 
-	tl := NewTeller(tlrfile, cmd, true, logger)
+	tl := NewCellar(clrfile, cmd, true, logger)
 
 	assert.True(t, tl.Redact)
-	assert.Equal(t, tl.Config, tlrfile)
+	assert.Equal(t, tl.Config, clrfile)
 	assert.Equal(t, tl.Cmd, cmd)
 	assert.Equal(t, tl.Populate, core.NewPopulate(map[string]string{
-		"project": "teller",
+		"project": "cellar",
 		"foo":     "bar",
 	}))
 	assert.Equal(t, tl.Logger, logger)
 }
 
-func TestTellerExports(t *testing.T) {
-	tl := Teller{
+func TestCellarExports(t *testing.T) {
+	tl := Cellar{
 		Logger:    getLogger(),
 		Entries:   []core.EnvEntry{},
 		Providers: &BuiltinProviders{},
@@ -184,7 +184,7 @@ func TestTellerExports(t *testing.T) {
 	b := tl.ExportEnv()
 	assert.Equal(t, b, "#!/bin/sh\n")
 
-	tl = Teller{
+	tl = Cellar{
 		Logger: getLogger(),
 		Entries: []core.EnvEntry{
 			{Key: "k", Value: "v", ProviderName: "test-provider", ResolvedPath: "path/kv"},
@@ -202,8 +202,8 @@ func TestTellerExports(t *testing.T) {
 	assert.Equal(t, b, "{\n  \"k\": \"v\"\n}")
 }
 
-func TestTellerShExportEscaped(t *testing.T) {
-	tl := Teller{
+func TestCellarShExportEscaped(t *testing.T) {
+	tl := Cellar{
 		Logger:    getLogger(),
 		Entries:   []core.EnvEntry{},
 		Providers: &BuiltinProviders{},
@@ -212,7 +212,7 @@ func TestTellerShExportEscaped(t *testing.T) {
 	b := tl.ExportEnv()
 	assert.Equal(t, b, "#!/bin/sh\n")
 
-	tl = Teller{
+	tl = Cellar{
 		Logger: getLogger(),
 		Entries: []core.EnvEntry{
 			{Key: "k", Value: `()"';@  \(\)\"\'\;\@`, ProviderName: "test-provider", ResolvedPath: "path/kv"},
@@ -223,16 +223,16 @@ func TestTellerShExportEscaped(t *testing.T) {
 	assert.Equal(t, b, "#!/bin/sh\nexport k='()\"'\"'\"';@  \\(\\)\\\"\\'\"'\"'\\;\\@'\n")
 }
 
-func TestTellerCollect(t *testing.T) {
+func TestCellarCollect(t *testing.T) {
 	var b bytes.Buffer
-	tl := Teller{
+	tl := Cellar{
 		Logger:    getLogger(),
 		Providers: &BuiltinProviders{},
 		Porcelain: &Porcelain{
 			Out: &b,
 		},
 		Populate: core.NewPopulate(map[string]string{"stage": "prod"}),
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 			Providers: map[string]MappingConfig{
@@ -263,16 +263,16 @@ func TestTellerCollect(t *testing.T) {
 	assert.Equal(t, tl.Entries[1].ProviderName, "inmem-provider")
 }
 
-func TestTellerCollectWithSync(t *testing.T) {
+func TestCellarCollectWithSync(t *testing.T) {
 	var b bytes.Buffer
-	tl := Teller{
+	tl := Cellar{
 		Logger:    getLogger(),
 		Providers: &BuiltinProviders{},
 		Porcelain: &Porcelain{
 			Out: &b,
 		},
 		Populate: core.NewPopulate(map[string]string{"stage": "prod"}),
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 			Providers: map[string]MappingConfig{
@@ -306,16 +306,16 @@ func TestTellerCollectWithSync(t *testing.T) {
 	assert.Equal(t, tl.Entries[2].ProviderName, "inmem-provider")
 }
 
-func TestTellerCollectWithSyncRemapWith(t *testing.T) {
+func TestCellarCollectWithSyncRemapWith(t *testing.T) {
 	var b bytes.Buffer
-	tl := Teller{
+	tl := Cellar{
 		Logger:    getLogger(),
 		Providers: &BuiltinProviders{},
 		Porcelain: &Porcelain{
 			Out: &b,
 		},
 		Populate: core.NewPopulate(map[string]string{"stage": "prod"}),
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 			Providers: map[string]MappingConfig{
@@ -355,16 +355,16 @@ func TestTellerCollectWithSyncRemapWith(t *testing.T) {
 	assert.Equal(t, tl.Entries[2].ProviderName, "inmem-provider")
 }
 
-func TestTellerCollectWithErrors(t *testing.T) {
+func TestCellarCollectWithErrors(t *testing.T) {
 	var b bytes.Buffer
-	tl := Teller{
+	tl := Cellar{
 		Logger:    getLogger(),
 		Providers: &BuiltinProviders{},
 		Porcelain: &Porcelain{
 			Out: &b,
 		},
 		Populate: core.NewPopulate(map[string]string{"stage": "prod"}),
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 			Providers: map[string]MappingConfig{
@@ -379,25 +379,25 @@ func TestTellerCollectWithErrors(t *testing.T) {
 	err := tl.Collect()
 	assert.NotNil(t, err)
 }
-func TestTellerPorcelainNonInteractive(t *testing.T) {
+func TestCellarPorcelainNonInteractive(t *testing.T) {
 	var b bytes.Buffer
 
 	entries := []core.EnvEntry{}
 
-	tl := Teller{
+	tl := Cellar{
 		Logger:  getLogger(),
 		Entries: entries,
 		Porcelain: &Porcelain{
 			Out: &b,
 		},
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 		},
 	}
 
 	tl.PrintEnvKeys()
-	assert.Equal(t, b.String(), "-*- teller: loaded variables for test-project using nowhere -*-\n\n")
+	assert.Equal(t, b.String(), "-*- cellar: loaded variables for test-project using nowhere -*-\n\n")
 	b.Reset()
 
 	tl.Entries = append(tl.Entries, core.EnvEntry{
@@ -406,22 +406,22 @@ func TestTellerPorcelainNonInteractive(t *testing.T) {
 	})
 
 	tl.PrintEnvKeys()
-	assert.Equal(t, b.String(), "-*- teller: loaded variables for test-project using nowhere -*-\n\n[test-provider path/kv] k = v*****\n")
+	assert.Equal(t, b.String(), "-*- cellar: loaded variables for test-project using nowhere -*-\n\n[test-provider path/kv] k = v*****\n")
 
 }
 
-func TestTellerEntriesOutputSort(t *testing.T) {
+func TestCellarEntriesOutputSort(t *testing.T) {
 	var b bytes.Buffer
 
 	entries := []core.EnvEntry{}
 
-	tl := Teller{
+	tl := Cellar{
 		Logger:  getLogger(),
 		Entries: entries,
 		Porcelain: &Porcelain{
 			Out: &b,
 		},
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 		},
@@ -449,11 +449,11 @@ func TestTellerEntriesOutputSort(t *testing.T) {
 	})
 
 	tl.PrintEnvKeys()
-	assert.Equal(t, b.String(), "-*- teller: loaded variables for test-project using nowhere -*-\n\n[alpha path/kv] k = v*****\n[BETA path/kv] k = v*****\n[test-provider path/kv] a = a*****\n[test-provider path/kv] b = b*****\n[test-provider path/kv] c = c*****\n")
+	assert.Equal(t, b.String(), "-*- cellar: loaded variables for test-project using nowhere -*-\n\n[alpha path/kv] k = v*****\n[BETA path/kv] k = v*****\n[test-provider path/kv] a = a*****\n[test-provider path/kv] b = b*****\n[test-provider path/kv] c = c*****\n")
 }
 
-func TestTellerDrift(t *testing.T) {
-	tl := Teller{
+func TestCellarDrift(t *testing.T) {
+	tl := Cellar{
 		Logger: getLogger(),
 		Entries: []core.EnvEntry{
 			{Key: "k", Value: "v", Source: "s1", ProviderName: "test-provider", ResolvedPath: "path/kv"},
@@ -475,14 +475,14 @@ func TestTellerDrift(t *testing.T) {
 	assert.Equal(t, d.Target.Value, "CHANGED")
 }
 
-func TestTellerMirrorDrift(t *testing.T) {
-	tlrfile, err := NewTellerFile("../fixtures/mirror-drift/teller.yml")
+func TestCellarMirrorDrift(t *testing.T) {
+	clrfile, err := NewCellarFile("../fixtures/mirror-drift/cellar.yml")
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 		os.Exit(1)
 	}
 
-	tl := NewTeller(tlrfile, []string{}, false, getLogger())
+	tl := NewCellar(clrfile, []string{}, false, getLogger())
 
 	drifts, err := tl.MirrorDrift("source", "target")
 	assert.NoError(t, err)
@@ -501,14 +501,14 @@ func TestTellerMirrorDrift(t *testing.T) {
 	assert.Equal(t, d.Target.Value, "5")
 }
 
-func TestTellerSync(t *testing.T) {
-	tlrfile, err := NewTellerFile("../fixtures/sync/teller.yml")
+func TestCellarSync(t *testing.T) {
+	clrfile, err := NewCellarFile("../fixtures/sync/cellar.yml")
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 		os.Exit(1)
 	}
 
-	tl := NewTeller(tlrfile, []string{}, false, getLogger())
+	tl := NewCellar(clrfile, []string{}, false, getLogger())
 
 	err = os.WriteFile("../fixtures/sync/target.env", []byte(`
 FOO=1
@@ -544,13 +544,13 @@ TWO="2"`)
 
 func TestTemplateFile(t *testing.T) {
 
-	tlrfile, err := NewTellerFile("../fixtures/sync/teller.yml")
+	clrfile, err := NewCellarFile("../fixtures/sync/cellar.yml")
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 		os.Exit(1)
 	}
 
-	tl := NewTeller(tlrfile, []string{}, false, getLogger())
+	tl := NewCellar(clrfile, []string{}, false, getLogger())
 	tl.Entries = append(tl.Entries, core.EnvEntry{Key: "TEST-PLACEHOLDER", Value: "secret-here"})
 
 	tempFolder, _ := os.MkdirTemp(os.TempDir(), "test-template")
@@ -559,7 +559,7 @@ func TestTemplateFile(t *testing.T) {
 	templatePath := filepath.Join(tempFolder, "target.tpl")      // prepare template file path
 	destinationPath := filepath.Join(tempFolder, "starget.envs") // prepare destination file path
 
-	err = os.WriteFile(templatePath, []byte(`Hello, {{.Teller.EnvByKey "TEST-PLACEHOLDER" "default-value" }}!`), 0644)
+	err = os.WriteFile(templatePath, []byte(`Hello, {{.Cellar.EnvByKey "TEST-PLACEHOLDER" "default-value" }}!`), 0644)
 	assert.NoError(t, err)
 
 	err = tl.templateFile(templatePath, destinationPath)
@@ -573,13 +573,13 @@ func TestTemplateFile(t *testing.T) {
 
 func TestTemplateFolder(t *testing.T) {
 
-	tlrfile, err := NewTellerFile("../fixtures/sync/teller.yml")
+	clrfile, err := NewCellarFile("../fixtures/sync/cellar.yml")
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 		os.Exit(1)
 	}
 
-	tl := NewTeller(tlrfile, []string{}, false, getLogger())
+	tl := NewCellar(clrfile, []string{}, false, getLogger())
 	tl.Entries = append(tl.Entries, core.EnvEntry{Key: "TEST-PLACEHOLDER", Value: "secret-here"})
 	tl.Entries = append(tl.Entries, core.EnvEntry{Key: "TEST-PLACEHOLDER-2", Value: "secret2-here"})
 
@@ -600,9 +600,9 @@ func TestTemplateFolder(t *testing.T) {
 
 	defer os.RemoveAll(tempFolder)
 
-	err = os.WriteFile(filepath.Join(templateFolder, "target.tpl"), []byte(`Hello, {{.Teller.EnvByKey "TEST-PLACEHOLDER" "default-value" }}!`), 0644)
+	err = os.WriteFile(filepath.Join(templateFolder, "target.tpl"), []byte(`Hello, {{.Cellar.EnvByKey "TEST-PLACEHOLDER" "default-value" }}!`), 0644)
 	assert.NoError(t, err)
-	err = os.WriteFile(filepath.Join(templateFolder, "folder1", "folder2", "target2.tpl"), []byte(`Hello, {{.Teller.EnvByKey "TEST-PLACEHOLDER-2" "default-value" }}!`), 0644)
+	err = os.WriteFile(filepath.Join(templateFolder, "folder1", "folder2", "target2.tpl"), []byte(`Hello, {{.Cellar.EnvByKey "TEST-PLACEHOLDER-2" "default-value" }}!`), 0644)
 	assert.NoError(t, err)
 
 	err = tl.templateFolder(templateFolder, copyToFolder)
@@ -619,7 +619,7 @@ func TestTemplateFolder(t *testing.T) {
 
 }
 
-func TestTellerDelete(t *testing.T) {
+func TestCellarDelete(t *testing.T) {
 	fooPath := "/sample/path/FOO"
 	p := &InMemProvider{
 		inmem: map[string]string{
@@ -628,14 +628,14 @@ func TestTellerDelete(t *testing.T) {
 		},
 		alwaysError: false,
 	}
-	tl := Teller{
+	tl := Cellar{
 		Logger:    getLogger(),
 		Providers: p,
 		Porcelain: &Porcelain{
 			Out: ioutil.Discard,
 		},
 		Populate: core.NewPopulate(map[string]string{"stage": "prod"}),
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 			Providers: map[string]MappingConfig{
@@ -670,7 +670,7 @@ func TestTellerDelete(t *testing.T) {
 	assert.Equal(t, len(p.inmem), 0)
 }
 
-func TestTellerDeleteAll(t *testing.T) {
+func TestCellarDeleteAll(t *testing.T) {
 	p := &InMemProvider{
 		inmem: map[string]string{
 			"/sample/path/FOO": "foo",
@@ -678,14 +678,14 @@ func TestTellerDeleteAll(t *testing.T) {
 		},
 		alwaysError: false,
 	}
-	tl := Teller{
+	tl := Cellar{
 		Logger:    getLogger(),
 		Providers: p,
 		Porcelain: &Porcelain{
 			Out: ioutil.Discard,
 		},
 		Populate: core.NewPopulate(map[string]string{"stage": "prod"}),
-		Config: &TellerFile{
+		Config: &CellarFile{
 			Project:    "test-project",
 			LoadedFrom: "nowhere",
 			Providers: map[string]MappingConfig{
@@ -711,7 +711,7 @@ func TestTellerDeleteAll(t *testing.T) {
 	assert.Equal(t, len(p.inmem), 0)
 }
 
-func TestTeller_execCmd(t *testing.T) {
+func TestCellar_execCmd(t *testing.T) {
 	cmd := "bash"
 	cmdArgs := []string{"-c", "for i in {1..3}; do echo $SOME_KEY; echo $OTHER_KEY 1>&2; done"}
 	entries := []core.EnvEntry{
@@ -770,8 +770,8 @@ func TestTeller_execCmd(t *testing.T) {
 			os.Stderr, err = os.CreateTemp(t.TempDir(), "stderr")
 			assert.NoError(t, err)
 
-			tl := &Teller{
-				Config: &TellerFile{
+			tl := &Cellar{
+				Config: &CellarFile{
 					CarryEnv: tt.carryEnv,
 				},
 				Entries: entries,

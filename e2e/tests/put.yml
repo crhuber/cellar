@@ -1,7 +1,7 @@
 ---
 name: Put multiple entires
 command: <binary-path> put FOO=new-foo-value BAR=new-bar-value --providers filesystem
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: test
 
@@ -50,4 +50,4 @@ expected_stderr: |
   Put BAR (DYNAMIC-FULL-PATH/settings/test/bar) in filesystem: OK.
   Put FOO (DYNAMIC-FULL-PATH/settings/test/foo) in filesystem: OK.
 
-expected_stdout: 
+expected_stdout:

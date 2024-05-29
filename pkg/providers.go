@@ -1,8 +1,8 @@
 package pkg
 
 import (
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/providers"
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/providers"
 )
 
 type Providers interface {

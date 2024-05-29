@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 )
 
 var providersMap = map[string]core.RegisteredProvider{}

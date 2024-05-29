@@ -3,12 +3,12 @@ package pkg
 import (
 	"os"
 
-	"github.com/spectralops/teller/pkg/core"
+	"github.com/crhuber/cellar/pkg/core"
 	"gopkg.in/yaml.v2"
 )
 
 type ProvidersMap map[string]MappingConfig
-type TellerFile struct {
+type CellarFile struct {
 	Opts       map[string]string `yaml:"opts,omitempty"`
 	Confirm    string            `yaml:"confirm,omitempty"`
 	Project    string            `yaml:"project,omitempty"`
@@ -23,12 +23,12 @@ type MappingConfig struct {
 	Env        *map[string]core.KeyPath `yaml:"env,omitempty"`
 }
 
-func NewTellerFile(s string) (*TellerFile, error) {
+func NewCellarFile(s string) (*CellarFile, error) {
 	yamlFile, err := os.ReadFile(s)
 	if err != nil {
 		return nil, err
 	}
-	t := &TellerFile{}
+	t := &CellarFile{}
 	err = yaml.Unmarshal(yamlFile, t)
 	if err != nil {
 		return nil, err

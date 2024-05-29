@@ -1,6 +1,6 @@
 # How to add a new provider
 
-Adding a new Teller provider is very easy, but you still need to know where to start. We summarize the steps very shortly to make your life easier
+Adding a new Cellar provider is very easy, but you still need to know where to start. We summarize the steps very shortly to make your life easier
 
 ## Provider implementation
 
@@ -49,7 +49,7 @@ You're done! :rocket:
 Run the command `go run main.go new` and run through the flow in the wizard.
 Ensure that you see your provider in the `Select your secret providers` question.
 
-After the `teller.yml` file is created, run the command `go run main.go yaml`, you should see the message :
+After the `cellar.yml` file is created, run the command `go run main.go yaml`, you should see the message :
 
 ```sh
 FATA[0000] could not load all variables from the given existing providers  error="provider \"Example\" does not implement write yet"

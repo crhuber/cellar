@@ -1,4 +1,4 @@
-module github.com/spectralops/teller
+module github.com/crhuber/cellar
 
 go 1.18
 

@@ -1,7 +1,7 @@
 ---
 name: Custom config name
-command: <binary-path> show -c .custom-teller.yml
-config_file_name: .custom-teller.yml
+command: <binary-path> show -c .custom-cellar.yml
+config_file_name: .custom-cellar.yml
 config_content: >
   project: test
 
@@ -16,7 +16,7 @@ init_snapshot:
     content: shazam
 expected_snapshot:
 expected_stderr: |
-  -*- teller: loaded variables for test using .custom-teller.yml -*-
+  -*- cellar: loaded variables for test using .custom-cellar.yml -*-
 
   [filesystem DYNAMIC-SHORT-PATH...tings/test/foo] FOO = sh*****
 

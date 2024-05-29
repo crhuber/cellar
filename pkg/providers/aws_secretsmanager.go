@@ -13,9 +13,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	smtypes "github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
-	"github.com/spectralops/teller/pkg/utils"
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
+	"github.com/crhuber/cellar/pkg/utils"
 )
 
 type AWSSecretsManagerClient interface {

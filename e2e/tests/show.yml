@@ -1,7 +1,7 @@
 ---
 name: Show entries
-command: <binary-path> show 
-config_file_name: .teller.yml
+command: <binary-path> show
+config_file_name: .cellar.yml
 config_content: >
   project: test
 
@@ -32,12 +32,12 @@ init_snapshot:
     content: shazam-1
 expected_snapshot:
 expected_stderr: |
-  -*- teller: loaded variables for test using .teller.yml -*-
-  
+  -*- cellar: loaded variables for test using .cellar.yml -*-
+
   [filesystem DYNAMIC-SHORT-PATH...tings/test/bar] BAR = sh*****
   [filesystem DYNAMIC-SHORT-PATH...tings/test/foo] FOO = sh*****
   [filesystem DYNAMIC-SHORT-PATH...tings/test/all] secret-a = ma*****
   [filesystem DYNAMIC-SHORT-PATH...tings/test/all] secret-b = sh*****
   [filesystem DYNAMIC-SHORT-PATH...tings/test/all] secret-c = sh*****
 
-expected_stdout: 
+expected_stdout:

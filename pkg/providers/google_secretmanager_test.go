@@ -9,8 +9,8 @@ import (
 	"github.com/golang/mock/gomock"
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/providers/mock_providers"
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/providers/mock_providers"
 )
 
 func TestGoogleSM(t *testing.T) {

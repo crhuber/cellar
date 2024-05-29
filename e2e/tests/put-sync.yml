@@ -1,7 +1,7 @@
 ---
 name: Put with --sync flag
 command: <binary-path> put key-1=key-1-content key-2=key-2-content --providers filesystem --sync
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: test
 
@@ -55,4 +55,4 @@ expected_snapshot:
 expected_stderr: |
   Synced filesystem (DYNAMIC-FULL-PATH/settings/test/all): OK.
 
-expected_stdout: 
+expected_stdout:

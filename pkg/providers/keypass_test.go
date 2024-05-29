@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/spectralops/teller/pkg/core"
+	"github.com/crhuber/cellar/pkg/core"
 )
 
 func TestKetPass(t *testing.T) {

@@ -6,9 +6,9 @@ import (
 	"os"
 	"sort"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 	heroku "github.com/heroku/heroku-go/v5"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
 )
 
 type HerokuClient interface {
@@ -22,7 +22,7 @@ type Heroku struct {
 
 const HerokuName = "heroku"
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Description:    "Heroku",

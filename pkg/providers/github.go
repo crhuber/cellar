@@ -9,9 +9,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 	"github.com/google/go-github/v43/github"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
 	"golang.org/x/crypto/nacl/box"
 	"golang.org/x/oauth2"
 )
@@ -36,7 +36,7 @@ type GitHub struct {
 // NewGitHub create new GitHub provider
 const GithubName = "GitHub"
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Description:    "Github",

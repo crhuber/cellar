@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 	ksm "github.com/keeper-security/secrets-manager-go/core"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
 )
 
 type KsmClient interface {
@@ -24,7 +24,7 @@ type KeeperSecretsManager struct {
 
 const keeperName = "keeper_secretsmanager"
 
-//nolint
+// nolint
 func init() {
 	metaInto := core.MetaInfo{
 		Description:    "Keeper Secrets Manager",

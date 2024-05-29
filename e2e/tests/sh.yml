@@ -1,7 +1,7 @@
 ---
 name: Sh print
 command: <binary-path> sh
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: test
 

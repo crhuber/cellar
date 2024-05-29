@@ -1,7 +1,7 @@
 ---
 name: Run with --redact flag
 command: <binary-path> run --redact -- bash script
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: redaction test
 
@@ -19,7 +19,7 @@ init_snapshot:
     content: |
       #!/usr/bin/env bash
       for _ in {1..5};
-      do 
+      do
         echo secret value;
       done
 expected_snapshot:

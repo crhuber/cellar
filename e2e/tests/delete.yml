@@ -1,7 +1,7 @@
 ---
 name: Delete multiple entires
 command: <binary-path> delete FOO BAR --providers filesystem
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: test
 
@@ -45,4 +45,4 @@ expected_stderr: |
   Delete FOO (DYNAMIC-FULL-PATH/settings/test/foo) in filesystem: OK.
   Delete BAR (DYNAMIC-FULL-PATH/settings/test/bar) in filesystem: OK.
 
-expected_stdout: 
+expected_stdout:

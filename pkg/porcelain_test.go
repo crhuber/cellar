@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/spectralops/teller/pkg/core"
+	"github.com/crhuber/cellar/pkg/core"
 )
 
 func TestPorcelainNonInteractive(t *testing.T) {
@@ -18,7 +18,7 @@ func TestPorcelainNonInteractive(t *testing.T) {
 	b.Reset()
 
 	p.PrintContext("project", "place")
-	assert.Equal(t, b.String(), "-*- teller: loaded variables for project using place -*-\n")
+	assert.Equal(t, b.String(), "-*- cellar: loaded variables for project using place -*-\n")
 	b.Reset()
 
 	p.PrintEntries([]core.EnvEntry{

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/spectralops/teller/pkg/core"
+	"github.com/crhuber/cellar/pkg/core"
 )
 
 func createMockDirectoryStructure(f *FileSystem) error {
@@ -37,7 +37,7 @@ func createMockDirectoryStructure(f *FileSystem) error {
 
 func TestFileSystem(t *testing.T) {
 
-	tempFolder, err := os.MkdirTemp(os.TempDir(), "teller-filesystem")
+	tempFolder, err := os.MkdirTemp(os.TempDir(), "cellar-filesystem")
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempFolder)
 
@@ -57,7 +57,7 @@ func TestFileSystem(t *testing.T) {
 
 func TestFileSystemSetEntry(t *testing.T) {
 
-	tempFolder, err := os.MkdirTemp(os.TempDir(), "teller-filesystem")
+	tempFolder, err := os.MkdirTemp(os.TempDir(), "cellar-filesystem")
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempFolder)
 
@@ -83,7 +83,7 @@ func TestFileSystemSetEntry(t *testing.T) {
 
 func TestFileSystemDeleteEntry(t *testing.T) {
 
-	tempFolder, err := os.MkdirTemp(os.TempDir(), "teller-filesystem")
+	tempFolder, err := os.MkdirTemp(os.TempDir(), "cellar-filesystem")
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempFolder)
 

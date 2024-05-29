@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug encountered 
+about: Report a bug encountered
 labels: bug
 ---
 
@@ -24,5 +24,5 @@ labels: bug
 <!-- Providing context helps us come up with a solution that is most useful in the real world -->
 
 ## Specifications
-  - Version: `$ teller version`
+  - Version: `$ cellar version`
   - Platform:

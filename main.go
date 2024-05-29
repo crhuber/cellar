@@ -8,14 +8,14 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/spectralops/teller/pkg"
-	"github.com/spectralops/teller/pkg/logging"
-	"github.com/spectralops/teller/pkg/providers"
-	"github.com/spectralops/teller/pkg/utils"
+	"github.com/crhuber/cellar/pkg"
+	"github.com/crhuber/cellar/pkg/logging"
+	"github.com/crhuber/cellar/pkg/providers"
+	"github.com/crhuber/cellar/pkg/utils"
 )
 
 var CLI struct {
-	Config   string `short:"c" help:"Path to teller YAML file"`
+	Config   string `short:"c" help:"Path to cellar YAML file"`
 	LogLevel string `short:"l"  help:"Application log level"`
 
 	Run struct {
@@ -24,10 +24,10 @@ var CLI struct {
 	} `cmd help:"Run a command"`
 
 	Version struct {
-	} `cmd aliases:"v" help:"Teller version"`
+	} `cmd aliases:"v" help:"Cellar version"`
 
 	New struct {
-	} `cmd help:"Create a new teller configuration file"`
+	} `cmd help:"Create a new cellar configuration file"`
 
 	Show struct {
 	} `cmd help:"Print in a human friendly, secure format"`
@@ -68,7 +68,7 @@ var CLI struct {
 	} `cmd help:"Detect secret and value drift between providers"`
 
 	Put struct {
-		Kvs       map[string]string `arg name:"kvs" help:"A list of key/value pairs, where key is from your tellerfile mapping"`
+		Kvs       map[string]string `arg name:"kvs" help:"A list of key/value pairs, where key is from your cellarfile mapping"`
 		Providers []string          `name:"providers" help:"A list of providers to put the new value into"`
 		Sync      bool              `optional name:"sync" help:"Sync all given k/vs to the env_sync key"`
 		Path      string            `optional name:"path" help:"Take literal path and not from config"`
@@ -86,7 +86,7 @@ var CLI struct {
 	} `cmd help:"Check same-key (mirror) value drift between source and target"`
 
 	Delete struct {
-		Keys      []string `arg optional name:"keys" help:"A list of keys, where key is from your tellerfile mapping"`
+		Keys      []string `arg optional name:"keys" help:"A list of keys, where key is from your cellarfile mapping"`
 		Providers []string `name:"providers" help:"A list of providers to delete the key from"`
 		Path      string   `optional name:"path" help:"Take literal path and not from config"`
 		AllKeys   bool     `optional name:"all-keys" help:"Deletes all keys for a given path. Applicable only when used together with the 'path' flag"`
@@ -100,7 +100,7 @@ var (
 	defaultLogLevel = "error"
 )
 
-//nolint
+// nolint
 func main() {
 	ctx := kong.Parse(&CLI)
 
@@ -110,11 +110,11 @@ func main() {
 	}
 	logger.SetLevel(defaultLogLevel)
 
-	// below commands don't require a tellerfile
+	// below commands don't require a cellarfile
 	//nolint
 	switch ctx.Command() {
 	case "version":
-		fmt.Printf("Teller %v\n", version)
+		fmt.Printf("Cellar %v\n", version)
 		fmt.Printf("Revision %v, date: %v\n", commit, date)
 		os.Exit(0)
 	case "providers":
@@ -137,54 +137,55 @@ func main() {
 	// load or create new file
 	//
 	const (
-		defaultTellerFile = ".teller.yml"
-		// Alternative default teller file, it uses official YAML extension
-		// See https://github.com/tellerops/teller/issues/162
-		secondDefaultTellerFile = ".teller.yaml"
+		// TODO add teller support
+		defaultCellarFile = ".cellar.yml"
+		// Alternative default cellar file, it uses official YAML extension
+		// See https://github.com/cellarops/cellar/issues/162
+		secondDefaultCellarFile = ".cellar.yaml"
 	)
 
-	telleryml := defaultTellerFile
+	cellaryml := defaultCellarFile
 	if CLI.Config != "" {
-		telleryml = CLI.Config
+		cellaryml = CLI.Config
 	}
 
 	if ctx.Command() == "new" {
-		teller := pkg.Teller{
+		cellar := pkg.Cellar{
 			Porcelain: &pkg.Porcelain{Out: os.Stderr},
 			Logger:    logger,
 		}
-		if _, err := os.Stat(telleryml); err == nil && !teller.Porcelain.AskForConfirmation(fmt.Sprintf("The file %s already exists. Do you want to override the configuration with new settings?", telleryml)) {
+		if _, err := os.Stat(cellaryml); err == nil && !cellar.Porcelain.AskForConfirmation(fmt.Sprintf("The file %s already exists. Do you want to override the configuration with new settings?", cellaryml)) {
 			os.Exit(0)
 		}
 
-		err := teller.SetupNewProject(telleryml)
+		err := cellar.SetupNewProject(cellaryml)
 		if err != nil {
 			logger.WithError(err).Fatal("could not create configuration")
 		}
 		os.Exit(0)
 	}
 
-	tlrfile, err := pkg.NewTellerFile(telleryml)
+	clrfile, err := pkg.NewCellarFile(cellaryml)
 	if isDefaultFilePathErr(CLI.Config, err) {
-		tlrfile, err = pkg.NewTellerFile(secondDefaultTellerFile)
+		clrfile, err = pkg.NewCellarFile(secondDefaultCellarFile)
 	}
 	if err != nil {
-		logger.WithError(err).WithField("file", telleryml).Fatal("could not read file")
+		logger.WithError(err).WithField("file", cellaryml).Fatal("could not read file")
 	}
 
-	teller := pkg.NewTeller(tlrfile, CLI.Run.Cmd, CLI.Run.Redact, logger)
+	cellar := pkg.NewCellar(clrfile, CLI.Run.Cmd, CLI.Run.Redact, logger)
 
 	// below commands don't require collecting
 	//nolint
 	switch ctx.Command() {
 	case "put <kvs>":
-		err := teller.Put(CLI.Put.Kvs, CLI.Put.Providers, CLI.Put.Sync, CLI.Put.Path)
+		err := cellar.Put(CLI.Put.Kvs, CLI.Put.Providers, CLI.Put.Sync, CLI.Put.Path)
 		if err != nil {
 			logger.WithError(err).Fatal("put command field")
 		}
 		os.Exit(0)
 	case "copy":
-		err := teller.Sync(CLI.Copy.From, CLI.Copy.To, CLI.Copy.Sync)
+		err := cellar.Sync(CLI.Copy.From, CLI.Copy.To, CLI.Copy.Sync)
 		if err != nil {
 			logger.WithError(err).WithFields(map[string]interface{}{
 				"from":      CLI.Copy.From,
@@ -194,23 +195,23 @@ func main() {
 		}
 		os.Exit(0)
 	case "mirror-drift":
-		drifts, err := teller.MirrorDrift(CLI.MirrorDrift.Source, CLI.MirrorDrift.Target)
+		drifts, err := cellar.MirrorDrift(CLI.MirrorDrift.Source, CLI.MirrorDrift.Target)
 		if err != nil {
 			logger.WithError(err).Fatal("mirror-drift command field")
 		}
 		if len(drifts) > 0 {
-			teller.Porcelain.PrintDrift(drifts)
+			cellar.Porcelain.PrintDrift(drifts)
 			os.Exit(1)
 		}
 		os.Exit(0)
 	case "delete":
-		err := teller.Delete(CLI.Delete.Keys, CLI.Delete.Providers, CLI.Delete.Path, CLI.Delete.AllKeys)
+		err := cellar.Delete(CLI.Delete.Keys, CLI.Delete.Providers, CLI.Delete.Path, CLI.Delete.AllKeys)
 		if err != nil {
 			logger.WithError(err).Fatal("could not delete key")
 		}
 		os.Exit(0)
 	case "delete <keys>":
-		err := teller.Delete(CLI.Delete.Keys, CLI.Delete.Providers, CLI.Delete.Path, CLI.Delete.AllKeys)
+		err := cellar.Delete(CLI.Delete.Keys, CLI.Delete.Providers, CLI.Delete.Path, CLI.Delete.AllKeys)
 		if err != nil {
 			logger.WithError(err).Fatal("could not delete keys")
 		}
@@ -218,25 +219,25 @@ func main() {
 	}
 	// collecting
 
-	err = teller.Collect()
+	err = cellar.Collect()
 	if err != nil {
 		logger.WithError(err).Fatal("could not load all variables from the given existing providers")
 	}
 
-	// all of the below require a tellerfile
+	// all of the below require a cellarfile
 	switch ctx.Command() {
 	case "run <cmd>":
 		if len(CLI.Run.Cmd) < 1 {
 			logger.Fatal("Error: No command given")
 		}
-		teller.Exec()
+		cellar.Exec()
 
 	case "graph-drift <providers>":
 		fallthrough
 	case "graph-drift":
-		drifts := teller.Drift(CLI.GraphDrift.Providers)
+		drifts := cellar.Drift(CLI.GraphDrift.Providers)
 		if len(drifts) > 0 {
-			teller.Porcelain.PrintDrift(drifts)
+			cellar.Porcelain.PrintDrift(drifts)
 			os.Exit(1)
 		}
 
@@ -264,35 +265,35 @@ func main() {
 			fout = f
 		}
 
-		if err := teller.RedactLines(fin, fout); err != nil {
+		if err := cellar.RedactLines(fin, fout); err != nil {
 			logger.WithError(err).Fatal("could not redact lines")
 		}
 
 	case "sh":
-		fmt.Print(teller.ExportEnv())
+		fmt.Print(cellar.ExportEnv())
 
 	case "env":
-		fmt.Print(teller.ExportDotenv())
+		fmt.Print(cellar.ExportDotenv())
 
 	case "yaml":
-		out, err := teller.ExportYAML()
+		out, err := cellar.ExportYAML()
 		if err != nil {
 			logger.WithError(err).Fatal("could not export to YAML")
 		}
 		fmt.Print(out)
 
 	case "json":
-		out, err := teller.ExportJSON()
+		out, err := cellar.ExportJSON()
 		if err != nil {
 			logger.WithError(err).Fatal("could not export to JSON")
 		}
 		fmt.Print(out)
 
 	case "show":
-		teller.PrintEnvKeys()
+		cellar.PrintEnvKeys()
 
 	case "scan":
-		findings, err := teller.Scan(CLI.Scan.Path, CLI.Scan.Silent)
+		findings, err := cellar.Scan(CLI.Scan.Path, CLI.Scan.Silent)
 
 		if err != nil {
 			logger.WithError(err).WithField("path", CLI.Scan.Path).Fatal("scan error")
@@ -303,7 +304,7 @@ func main() {
 		}
 
 	case "template <template_path> <out>":
-		err := teller.Template(CLI.Template.TemplatePath, CLI.Template.Out)
+		err := cellar.Template(CLI.Template.TemplatePath, CLI.Template.Out)
 		if err != nil {
 			logger.WithError(err).WithFields(map[string]interface{}{
 				"template_path":   CLI.Template.TemplatePath,
@@ -313,12 +314,12 @@ func main() {
 
 	default:
 		println(ctx.Command())
-		teller.PrintEnvKeys()
+		cellar.PrintEnvKeys()
 	}
 }
 
 func isDefaultFilePathErr(config string, err error) bool {
-	// Ignore if explicitly set to '.teller.yml'.
+	// Ignore if explicitly set to '.cellar.yml'.
 	if config != "" {
 		return false
 	}

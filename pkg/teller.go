@@ -15,24 +15,24 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
+	"github.com/crhuber/cellar/pkg/providers"
 	"github.com/karrick/godirwalk"
 	"github.com/samber/lo"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
-	"github.com/spectralops/teller/pkg/providers"
 	"gopkg.in/yaml.v3"
 )
 
-// Teller
+// Cellar
 // Cmd - command to execute if any given.
-// Porcelain - wrapping teller in a nice porcelain; in other words the textual UI for teller.
+// Porcelain - wrapping cellar in a nice porcelain; in other words the textual UI for cellar.
 // Providers - the available providers to use.
 // Entries - when loaded, these contains the mapped entries. Load them with Collect()
-// Templating - Teller's templating options.
-type Teller struct {
+// Templating - Cellar's templating options.
+type Cellar struct {
 	Redact     bool
 	Cmd        []string
-	Config     *TellerFile
+	Config     *CellarFile
 	Porcelain  *Porcelain
 	Populate   *core.Populate
 	Providers  Providers
@@ -41,15 +41,15 @@ type Teller struct {
 	Logger     logging.Logger
 }
 
-// Create a new Teller instance, using a tellerfile, and a command to execute (if any)
-func NewTeller(tlrfile *TellerFile, cmd []string, redact bool, logger logging.Logger) *Teller {
-	opts := core.Opts{"project": tlrfile.Project}
-	for k, v := range tlrfile.Opts {
+// Create a new Cellar instance, using a cellarfile, and a command to execute (if any)
+func NewCellar(clrfile *CellarFile, cmd []string, redact bool, logger logging.Logger) *Cellar {
+	opts := core.Opts{"project": clrfile.Project}
+	for k, v := range clrfile.Opts {
 		opts[k] = v
 	}
-	return &Teller{
+	return &Cellar{
 		Redact:     redact,
-		Config:     tlrfile,
+		Config:     clrfile,
 		Cmd:        cmd,
 		Providers:  &BuiltinProviders{},
 		Populate:   core.NewPopulate(opts),
@@ -60,7 +60,7 @@ func NewTeller(tlrfile *TellerFile, cmd []string, redact bool, logger logging.Lo
 }
 
 // execute a command, and take care to sanitize the child process environment (conditionally)
-func (tl *Teller) execCmd(cmd string, cmdArgs []string, withRedaction bool) error {
+func (tl *Cellar) execCmd(cmd string, cmdArgs []string, withRedaction bool) error {
 	command := exec.Command(cmd, cmdArgs...)
 	if !tl.Config.CarryEnv {
 		command.Env = lo.Map(tl.Entries, func(ent core.EnvEntry, _ int) string {
@@ -92,7 +92,7 @@ func (tl *Teller) execCmd(cmd string, cmdArgs []string, withRedaction bool) erro
 	return command.Run()
 }
 
-func (tl *Teller) PrintEnvKeys() {
+func (tl *Cellar) PrintEnvKeys() {
 	tl.sortByProviderName()
 	tl.Porcelain.PrintContext(tl.Config.Project, tl.Config.LoadedFrom)
 	tl.Porcelain.VSpace(1)
@@ -100,7 +100,7 @@ func (tl *Teller) PrintEnvKeys() {
 }
 
 // Export variables into a shell sourceable format
-func (tl *Teller) ExportEnv() string {
+func (tl *Cellar) ExportEnv() string {
 	var b bytes.Buffer
 
 	fmt.Fprintf(&b, "#!/bin/sh\n")
@@ -113,7 +113,7 @@ func (tl *Teller) ExportEnv() string {
 }
 
 // Export variables into a .env format (basically a KEY=VAL format, that's also compatible with Docker)
-func (tl *Teller) ExportDotenv() string {
+func (tl *Cellar) ExportDotenv() string {
 	var b bytes.Buffer
 
 	for i := range tl.Entries {
@@ -123,7 +123,7 @@ func (tl *Teller) ExportDotenv() string {
 	return b.String()
 }
 
-func (tl *Teller) ExportYAML() (out string, err error) {
+func (tl *Cellar) ExportYAML() (out string, err error) {
 	valmap := map[string]string{}
 
 	for i := range tl.Entries {
@@ -137,7 +137,7 @@ func (tl *Teller) ExportYAML() (out string, err error) {
 	return string(content), nil
 }
 
-func (tl *Teller) ExportJSON() (out string, err error) {
+func (tl *Cellar) ExportJSON() (out string, err error) {
 	valmap := map[string]string{}
 
 	for i := range tl.Entries {
@@ -152,7 +152,7 @@ func (tl *Teller) ExportJSON() (out string, err error) {
 }
 
 func renderWizardTemplate(fname string, answers *core.WizardAnswers) error {
-	t, err := template.New("t").Parse(TellerFileTemplate)
+	t, err := template.New("t").Parse(CellarFileTemplate)
 	if err != nil {
 		return err
 	}
@@ -168,7 +168,7 @@ func renderWizardTemplate(fname string, answers *core.WizardAnswers) error {
 }
 
 // Start an interactive wizard, that will create a file when completed.
-func (tl *Teller) SetupNewProject(fname string) error {
+func (tl *Cellar) SetupNewProject(fname string) error {
 	answers, err := tl.Porcelain.StartWizard()
 	if err != nil {
 		return err
@@ -182,8 +182,8 @@ func (tl *Teller) SetupNewProject(fname string) error {
 	return nil
 }
 
-// Execute a command with teller. This requires all entries to be loaded beforehand with Collect()
-func (tl *Teller) RedactLines(r io.Reader, w io.Writer) error {
+// Execute a command with cellar. This requires all entries to be loaded beforehand with Collect()
+func (tl *Cellar) RedactLines(r io.Reader, w io.Writer) error {
 	o := NewRedactor(w, tl.Entries)
 	defer o.Close()
 
@@ -191,8 +191,8 @@ func (tl *Teller) RedactLines(r io.Reader, w io.Writer) error {
 	return err
 }
 
-// Execute a command with teller. This requires all entries to be loaded beforehand with Collect()
-func (tl *Teller) Exec() {
+// Execute a command with cellar. This requires all entries to be loaded beforehand with Collect()
+func (tl *Cellar) Exec() {
 	tl.Porcelain.PrintContext(tl.Config.Project, tl.Config.LoadedFrom)
 	if tl.Config.Confirm != "" {
 		tl.Porcelain.VSpace(1)
@@ -264,7 +264,7 @@ func checkForMatches(path string, entries []core.EnvEntry) ([]core.Match, error)
 // Scan for entries. Each of the mapped entries is considered highly sensitive unless stated other wise (with sensitive: high|medium|low|none)
 // as such, we can offer a security scan to locate those in the current codebase (if the entries are sensitive and are placed inside a vault or
 // similar store, what's the purpose of hardcoding these? let's help ourselves and locate throughout all the files in the path given)
-func (tl *Teller) Scan(path string, silent bool) ([]core.Match, error) {
+func (tl *Cellar) Scan(path string, silent bool) ([]core.Match, error) {
 	if path == "" {
 		path = "."
 	}
@@ -306,8 +306,8 @@ func (tl *Teller) Scan(path string, silent bool) ([]core.Match, error) {
 	return findings, err
 }
 
-// Template Teller vars from a given path (can be file or folder)
-func (tl *Teller) Template(from, to string) error {
+// Template Cellar vars from a given path (can be file or folder)
+func (tl *Cellar) Template(from, to string) error {
 
 	fileInfo, err := os.Stat(from)
 	if err != nil {
@@ -321,8 +321,8 @@ func (tl *Teller) Template(from, to string) error {
 	return tl.templateFile(from, to)
 }
 
-// templateFolder scan given folder and inject Teller vars for each search file
-func (tl *Teller) templateFolder(from, to string) error {
+// templateFolder scan given folder and inject Cellar vars for each search file
+func (tl *Cellar) templateFolder(from, to string) error {
 
 	err := godirwalk.Walk(from, &godirwalk.Options{
 		Callback: func(osPathname string, de *godirwalk.Dirent) error {
@@ -338,8 +338,8 @@ func (tl *Teller) templateFolder(from, to string) error {
 	return err
 }
 
-// templateFile inject Teller vars into a single file
-func (tl *Teller) templateFile(from, to string) error {
+// templateFile inject Cellar vars into a single file
+func (tl *Cellar) templateFile(from, to string) error {
 	tfile, err := os.ReadFile(from)
 	if err != nil {
 		return fmt.Errorf("cannot read template '%v': %v", from, err)
@@ -386,7 +386,7 @@ func updateParams(ent *core.EnvEntry, from *core.KeyPath, pname string) {
 	}
 }
 
-func (tl *Teller) CollectFromProvider(pname string) ([]core.EnvEntry, error) {
+func (tl *Cellar) CollectFromProvider(pname string) ([]core.EnvEntry, error) {
 
 	entries := []core.EnvEntry{}
 	conf, ok := tl.Config.Providers[pname]
@@ -460,7 +460,7 @@ func (tl *Teller) CollectFromProvider(pname string) ([]core.EnvEntry, error) {
 	return entries, nil
 }
 
-func (tl *Teller) CollectFromProviderMap(ps *ProvidersMap) ([]core.EnvEntry, error) {
+func (tl *Cellar) CollectFromProviderMap(ps *ProvidersMap) ([]core.EnvEntry, error) {
 	entries := []core.EnvEntry{}
 	for pname := range *ps {
 		pents, err := tl.CollectFromProvider(pname)
@@ -474,10 +474,10 @@ func (tl *Teller) CollectFromProviderMap(ps *ProvidersMap) ([]core.EnvEntry, err
 	return entries, nil
 }
 
-// The main "load all variables from all providers" logic. Walks over all definitions in the tellerfile
+// The main "load all variables from all providers" logic. Walks over all definitions in the cellarfile
 // and then: fetches, converts, creates a new EnvEntry. We're also mapping the sensitivity aspects of it.
 // Note that for a similarly named entry - last one wins.
-func (tl *Teller) Collect() error {
+func (tl *Cellar) Collect() error {
 	t := tl.Config
 	entries, err := tl.CollectFromProviderMap(&t.Providers)
 	if err != nil {
@@ -488,11 +488,11 @@ func (tl *Teller) Collect() error {
 	return nil
 }
 
-func (tl *Teller) sortByProviderName() {
+func (tl *Cellar) sortByProviderName() {
 	sort.Sort(core.EntriesByProvider(tl.Entries))
 }
 
-func (tl *Teller) Drift(providerNames []string) []core.DriftedEntry {
+func (tl *Cellar) Drift(providerNames []string) []core.DriftedEntry {
 	sources := map[string]core.EnvEntry{}
 	targets := map[string][]core.EnvEntry{}
 	filtering := len(providerNames) > 0
@@ -534,7 +534,7 @@ func (tl *Teller) Drift(providerNames []string) []core.DriftedEntry {
 	return drifts
 }
 
-func (tl *Teller) GetProviderByName(pname string) (*MappingConfig, core.Provider, error) {
+func (tl *Cellar) GetProviderByName(pname string) (*MappingConfig, core.Provider, error) {
 	pcfg, ok := tl.Config.Providers[pname]
 	if !ok {
 		return nil, nil, fmt.Errorf("provider %v not found", pname)
@@ -547,7 +547,7 @@ func (tl *Teller) GetProviderByName(pname string) (*MappingConfig, core.Provider
 	return &pcfg, provider, err
 }
 
-func (tl *Teller) Put(kvmap map[string]string, providerNames []string, sync bool, directPath string) error {
+func (tl *Cellar) Put(kvmap map[string]string, providerNames []string, sync bool, directPath string) error {
 	for _, pname := range providerNames {
 		pcfg, provider, err := tl.GetProviderByName(pname)
 		if err != nil {
@@ -620,7 +620,7 @@ func (tl *Teller) Put(kvmap map[string]string, providerNames []string, sync bool
 	return nil
 }
 
-func (tl *Teller) Sync(from string, to []string, sync bool) error {
+func (tl *Cellar) Sync(from string, to []string, sync bool) error {
 	entries, err := tl.CollectFromProvider(from)
 	if err != nil {
 		return err
@@ -635,7 +635,7 @@ func (tl *Teller) Sync(from string, to []string, sync bool) error {
 	return err
 }
 
-func (tl *Teller) MirrorDrift(source, target string) ([]core.DriftedEntry, error) {
+func (tl *Cellar) MirrorDrift(source, target string) ([]core.DriftedEntry, error) {
 	drifts := []core.DriftedEntry{}
 	sourceEntries, err := tl.CollectFromProvider(source)
 	if err != nil {
@@ -666,7 +666,7 @@ func (tl *Teller) MirrorDrift(source, target string) ([]core.DriftedEntry, error
 	return drifts, nil
 }
 
-func (tl *Teller) Delete(keys, providerNames []string, directPath string, allKeys bool) error {
+func (tl *Cellar) Delete(keys, providerNames []string, directPath string, allKeys bool) error {
 	if len(providerNames) == 0 {
 		return errors.New("at least one provider has to be specified")
 	}

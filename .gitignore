@@ -1,10 +1,10 @@
 autobrew
 dist/
-teller
+cellar
 .vscode/
 node_modules/
 todo.txt
-.teller.writecase.yml
+.cellar.writecase.yml
 coverage.out
 fixtures/sync/target.env
 dist/

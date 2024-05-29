@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
+	"github.com/crhuber/cellar/pkg/core"
 	"github.com/mattn/lastpass-go"
-	"github.com/spectralops/teller/pkg/core"
 )
 
 func TestLastPass(t *testing.T) {

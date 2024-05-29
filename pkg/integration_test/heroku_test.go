@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
+	"github.com/crhuber/cellar/pkg/providers"
 	heroku "github.com/heroku/heroku-go/v5"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
-	"github.com/spectralops/teller/pkg/providers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +21,7 @@ func TestGetHeroku(t *testing.T) {
 	// TEST PRECONDITION:
 	//
 	// HEROKU_API_KEY populated
-	// 'teller-heroku-integration' app exists
+	// 'cellar-heroku-integration' app exists
 	//
 
 	//
@@ -31,7 +31,7 @@ func TestGetHeroku(t *testing.T) {
 	svc := heroku.NewService(heroku.DefaultClient)
 
 	v := "value1"
-	_, err := svc.ConfigVarUpdate(context.TODO(), "teller-heroku-integration", map[string]*string{"MG_KEY": &v, "K1": nil, "K2": nil})
+	_, err := svc.ConfigVarUpdate(context.TODO(), "cellar-heroku-integration", map[string]*string{"MG_KEY": &v, "K1": nil, "K2": nil})
 	assert.NoError(t, err)
 
 	//
@@ -39,13 +39,13 @@ func TestGetHeroku(t *testing.T) {
 	//
 	p, err := providers.NewHeroku(logging.New())
 	assert.NoError(t, err)
-	kvp := core.KeyPath{Env: "MG_KEY", Path: "teller-heroku-integration"}
+	kvp := core.KeyPath{Env: "MG_KEY", Path: "cellar-heroku-integration"}
 	res, err := p.Get(kvp)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "MG_KEY", res.Key)
 	assert.Equal(t, "value1", res.Value)
-	assert.Equal(t, "teller-heroku-integration", res.ResolvedPath)
+	assert.Equal(t, "cellar-heroku-integration", res.ResolvedPath)
 
 	err = p.Put(kvp, "changed-secret")
 	assert.NoError(t, err)
@@ -54,7 +54,7 @@ func TestGetHeroku(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "MG_KEY", res.Key)
 	assert.Equal(t, "changed-secret", res.Value)
-	assert.Equal(t, "teller-heroku-integration", res.ResolvedPath)
+	assert.Equal(t, "cellar-heroku-integration", res.ResolvedPath)
 
 	err = p.PutMapping(kvp, map[string]string{"K1": "v1", "K2": "v2"})
 	assert.NoError(t, err)

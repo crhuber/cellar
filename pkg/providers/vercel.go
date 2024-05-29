@@ -5,9 +5,9 @@ import (
 	"os"
 	"sort"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 	"github.com/dghubble/sling"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
 )
 
 type VercelClient interface {
@@ -65,14 +65,14 @@ const ProjectEndPoint = "/projects"
 
 const VercelName = "vercel"
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Name:           "vercel",
 		Description:    "Vercel",
 		Authentication: "Requires an API key populated in your environment in: `VERCEL_TOKEN`.",
 		ConfigTemplate: `
-  # requires an API token in: VERCEL_TOKEN 
+  # requires an API token in: VERCEL_TOKEN
   vercel:
 	# sync a complete environment
     env_sync:

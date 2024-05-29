@@ -100,28 +100,28 @@ providers:
   #       path: secrets/database/username
   #     DB_PASSWORD:
   #       path: secrets/database/passwords
-  
+
   # 1password:
   #   env_sync:
   #       path: # Key title
-  #       source: # 1Password token gen include access to multiple vault. to get the secrets you must add and vaultUUID. the field is mandatory     
+  #       source: # 1Password token gen include access to multiple vault. to get the secrets you must add and vaultUUID. the field is mandatory
   #   env:
   #     FOO_BAR:
   #       path: # Key title
   #       source: # 1Password token gen include access to multiple vault. to get the secrets you must add and vaultUUID. the field is mandatory
   #       field: # The secret field to get. notesPlain, {label key}, password etc.
-  
+
   # lastpass:
   #   # Configure via environment variables:
   #   # LASTPASS_USERNAME
   #   # LASTPASS_PASSWORD
   #   env_sync:
-  #       path: # LastPass item ID  
+  #       path: # LastPass item ID
   #   env:
   #     FOO_BAR:
   #       path: # LastPass item ID
   #       #field: by default taking password property. in case you want other property un-mark this line and set the LastPass property name
-  
+
 
 
 #  # Configure via environment variables for integration:

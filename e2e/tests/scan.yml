@@ -1,7 +1,7 @@
 ---
 name: scan entries
 command: <binary-path> scan
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: test
 

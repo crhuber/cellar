@@ -1,73 +1,25 @@
-<p align="center">
-<br/>
-<br/>
-<br/>
-   <img src="media/teller-logo.png" width="288"/>
-<br/>
-<br/>
-</p>
-
-<p align="center">
-<b>:computer: Never leave your terminal for secrets</b>
-<br/>
-<b>:pager: Create easy and clean workflows for working with cloud environments</b>
-<br/>
-<b>:mag_right: Scan for secrets and fight secret sprawl</b>
-<br/><br/><br/>
-   <a href="https://www.producthunt.com/posts/teller-3?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-teller-3" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=332313&theme=light" alt="Teller - The open-source universal secret manager for developers | Product Hunt" style="width: 250px; height: 54px;" width="150"  /></a><br/>
-<br/><br/><br/>
-<hr/>
-</p>
-
-<p align="center">
-<img src="https://github.com/spectralops/teller/actions/workflows/ci.yml/badge.svg"/>
-
-</p>
-
-# Teller - the open-source universal secret manager for developers
+# Cellar - the open-source universal secret manager for developers
 
 Never leave your terminal to use secrets while developing, testing, and building your apps.
 
-Instead of custom scripts, tokens in your `.zshrc` files, visible `EXPORT`s in your bash history, misplaced `.env.production` files and more around your workstation -- just use `teller` and connect it to any vault, key store, or cloud service you like (Teller support Hashicorp Vault, AWS Secrets Manager, Google Secret Manager, and many more).
+Instead of custom scripts, tokens in your `.zshrc` files, visible `EXPORT`s in your bash history, misplaced `.env.production` files and more around your workstation -- just use `cellar` and connect it to any vault, key store, or cloud service you like (Cellar support Hashicorp Vault, AWS Secrets Manager, Google Secret Manager, and many more).
 
-You can use Teller to tidy your own environment or for your team as a process and best practice.
+You can use Cellar to tidy your own environment or for your team as a process and best practice.
 
-![](media/providers.png)
+## Quick Start with `cellar` (or `clr`)
 
-## Quick Start with `teller` (or `tlr`)
+You can now use `cellar` or `clr` (if you like shortcuts!) in your terminal.
 
-You can install `teller` with homebrew:
+`cellar` will pull variables from your various cloud providers, vaults and others, and will populate your current working session (in various ways!, see more below) so you can work safely and much more productively.
 
-```
-$ brew tap spectralops/tap && brew install teller
-```
+`cellar` needs a cellarfile. This is a `.cellar.yml` file that lives in your repo, or one that you point cellar to with `cellar -c your-conf.yml`.
 
-You can now use `teller` or `tlr` (if you like shortcuts!) in your terminal.
-
-![](media/teller.gif)
-
-`teller` will pull variables from your various cloud providers, vaults and others, and will populate your current working session (in various ways!, see more below) so you can work safely and much more productively.
-
-`teller` needs a tellerfile. This is a `.teller.yml` file that lives in your repo, or one that you point teller to with `teller -c your-conf.yml`.
-
-## Using a Github Action
-
-For those using Github Action, you can have a 1-click experience of installing Teller in your CI:
-
-```yaml
-- name: Setup Teller
-  uses: spectralops/setup-teller@v1
-- name: Run a Teller task (show, scan, run, etc.)
-  run: teller run [args]
-```
-
-For more, check our [setup teller action](https://github.com/marketplace/actions/setup-teller) on the marketplace.
 
 ## Create your configuration
 
-Run `teller new` and follow the wizard, pick the providers you like and it will generate a `.teller.yml` for you.
+Run `cellar new` and follow the wizard, pick the providers you like and it will generate a `.cellar.yml` for you.
 
-Alternatively, you can use the following minimal template or [view a full example](.teller.example.yml):
+Alternatively, you can use the following minimal template or [view a full example](./docs/cellar.example.yml):
 
 ```yaml
 project: project_name
@@ -94,17 +46,17 @@ providers:
 Now you can just run processes with:
 
 ```
-$ teller run node src/server.js
+$ cellar run node src/server.js
 Service is up.
 Loaded configuration: Mailgun, SMTP
 Port: 5050
 ```
 
-Behind the scenes: `teller` fetched the correct variables, placed those (and _just_ those) in `ENV` for the `node` process to use.
+Behind the scenes: `cellar` fetched the correct variables, placed those (and _just_ those) in `ENV` for the `node` process to use.
 
 # Best practices
 
-Go and have a look at a collection of our [best practices](./best-practices.md)
+Go and have a look at a collection of our [best practices](./docs/best-practices.md)
 
 # Features
 
@@ -114,30 +66,30 @@ Manually exporting and setting up environment variables for running a process wi
 
 Got bitten by using `.env.production` and exposing it in the local project itself?
 
-Using `teller` and a `.teller.yml` file that exposes nothing to the prying eyes, you can work fluently and seamlessly with zero risk, also no need for quotes:
+Using `cellar` and a `.cellar.yml` file that exposes nothing to the prying eyes, you can work fluently and seamlessly with zero risk, also no need for quotes:
 
 ```
-$ teller run -- your-process arg1 arg2... --switch1 ...
+$ cellar run -- your-process arg1 arg2... --switch1 ...
 ```
 
 ## :mag_right: Inspecting variables
 
-This will output the current variables `teller` picks up. Only first 2 letters will be shown from each, of course.
+This will output the current variables `cellar` picks up. Only first 2 letters will be shown from each, of course.
 
 ```
-$ teller show
+$ cellar show
 ```
 
 ## :tv: Local shell population
 
 Hardcoding secrets into your shell scripts and dotfiles?
 
-In some cases it makes sense to eval variables into your current shell. For example in your `.zshrc` it makes much more sense to use `teller`, and not hardcode all those into the `.zshrc` file itself.
+In some cases it makes sense to eval variables into your current shell. For example in your `.zshrc` it makes much more sense to use `cellar`, and not hardcode all those into the `.zshrc` file itself.
 
 In this case, this is what you should add:
 
 ```
-eval "$(teller sh)"
+eval "$(cellar sh)"
 ```
 
 ## :whale: Easy Docker environment
@@ -147,30 +99,30 @@ Tired of grabbing all kinds of variables, setting those up, and worried about th
 Use this one liner from now on:
 
 ```
-$ docker run --rm -it --env-file <(teller env) alpine sh
+$ docker run --rm -it --env-file <(cellar env) alpine sh
 ```
 
 ## :warning: Scan for secrets
 
-Teller can help you fight secret sprawl and hard coded secrets, as well as be the best productivity tool for working with your vault.
+Cellar can help you fight secret sprawl and hard coded secrets, as well as be the best productivity tool for working with your vault.
 
 It can also integrate into your CI and serve as a shift-left security tool for your DevSecOps pipeline.
 
 Look for your vault-kept secrets in your code by running:
 
 ```
-$ teller scan
+$ cellar scan
 ```
 
 You can run it as a linter in your CI like so:
 
 ```
-run: teller scan --silent
+run: cellar scan --silent
 ```
 
 It will break your build if it finds something (returns exit code `1`).
 
-Use Teller for productively and securely running your processes and you get this for free -- nothing to configure. If you have data that you're bringing that you're sure isn't sensitive, flag it in your `teller.yml`:
+Use Cellar for productively and securely running your processes and you get this for free -- nothing to configure. If you have data that you're bringing that you're sure isn't sensitive, flag it in your `cellar.yml`:
 
 ```
 dotenv:
@@ -184,33 +136,33 @@ By default we treat all entries as sensitive, with value `high`.
 
 ## :recycle: Redact secrets from process outputs, logs, and files
 
-You can use `teller` as a redaction tool across your infrastructure, and run processes while redacting their output as well as clean up logs and live tails of logs.
+You can use `cellar` as a redaction tool across your infrastructure, and run processes while redacting their output as well as clean up logs and live tails of logs.
 
 Run a process and redact its output in real time:
 
 ```
-$ teller run --redact -- your-process arg1 arg2
+$ cellar run --redact -- your-process arg1 arg2
 ```
 
-Pipe any process output, tail or logs into teller to redact those, live:
+Pipe any process output, tail or logs into cellar to redact those, live:
 
 ```
-$ cat some.log | teller redact
+$ cat some.log | cellar redact
 ```
 
 It should also work with `tail -f`:
 
 ```
-$ tail -f /var/log/apache.log | teller redact
+$ tail -f /var/log/apache.log | cellar redact
 ```
 
 Finally, if you've got some files you want to redact, you can do that too:
 
 ```
-$ teller redact --in dirty.csv --out clean.csv
+$ cellar redact --in dirty.csv --out clean.csv
 ```
 
-If you omit `--in` Teller will take `stdin`, and if you omit `--out` Teller will output to `stdout`.
+If you omit `--in` Cellar will take `stdin`, and if you omit `--out` Cellar will output to `stdout`.
 
 ## :beetle: Detect secrets and value drift
 
@@ -226,10 +178,10 @@ Provider2:
   MG_PASS=foo***   # Both keys are called MG_PASS
 ```
 
-To detected mirror drifts, we use `teller mirror-drift`.
+To detected mirror drifts, we use `cellar mirror-drift`.
 
 ```bash
-$ teller mirror-drift --source global-dotenv --target my-dotenv
+$ cellar mirror-drift --source global-dotenv --target my-dotenv
 
 Drifts detected: 2
 
@@ -239,7 +191,7 @@ missing [] global-dotenv FB 3***** ??
 
 Use `mirror-drift --sync ...` in order to declare that the two providers should represent a completely synchronized mirror (all keys, all values).
 
-As always, the specific provider definitions are in your `teller.yml` file.
+As always, the specific provider definitions are in your `cellar.yml` file.
 
 ## :beetle: Detect secrets and value drift (graph links between providers)
 
@@ -273,10 +225,8 @@ providers:
 And run
 
 ```
-$ teller graph-drift dotenv dotenv2 -c your-config.yml
+$ cellar graph-drift dotenv dotenv2 -c your-config.yml
 ```
-
-![](https://user-images.githubusercontent.com/83390/117453797-07512380-af4e-11eb-949e-cc875e854fad.png)
 
 ## :scroll: Populate templates
 
@@ -284,18 +234,18 @@ Have a kickstarter project you want to populate quickly with some variables (not
 
 Have a production project that just _has_ to have a file to read that contains your variables?
 
-You can use `teller` to inject variables into your own templates (based on [go templates](https://golang.org/pkg/text/template/)).
+You can use `cellar` to inject variables into your own templates (based on [go templates](https://golang.org/pkg/text/template/)).
 
 With this template:
 
 ```go
-Hello, {{.Teller.EnvByKey "FOO_BAR" "default-value" }}!
+Hello, {{.Cellar.EnvByKey "FOO_BAR" "default-value" }}!
 ```
 
 Run:
 
 ```
-$ teller template my-template.tmpl out.txt
+$ cellar template my-template.tmpl out.txt
 ```
 
 Will get you, assuming `FOO_BAR=Spock`:
@@ -306,12 +256,12 @@ Hello, Spock!
 
 ## :arrows_counterclockwise: Copy/sync data between providers
 
-In cases where you want to sync between providers, you can do that with `teller copy`.
+In cases where you want to sync between providers, you can do that with `cellar copy`.
 
 **Specific mapping key sync**
 
 ```bash
-$ teller copy --from dotenv1 --to dotenv2,heroku1
+$ cellar copy --from dotenv1 --to dotenv2,heroku1
 ```
 
 This will:
@@ -322,7 +272,7 @@ This will:
 **Full copy sync**
 
 ```bash
-$ teller copy --sync --from dotenv1 --to dotenv2,heroku1
+$ cellar copy --sync --from dotenv1 --to dotenv2,heroku1
 ```
 
 This will:
@@ -332,17 +282,17 @@ This will:
 
 Notes:
 
-- The mapping per provider is as configured in your `teller.yaml` file, in the `env_sync` or `env` properties.
+- The mapping per provider is as configured in your `cellar.yaml` file, in the `env_sync` or `env` properties.
 - This sync will try to copy _all_ values from the source.
 
 ## :bike: Write and multi-write to providers
 
-Teller providers supporting _write_ use cases which allow writing values _into_ providers.
+Cellar providers supporting _write_ use cases which allow writing values _into_ providers.
 
-Remember, for this feature it still revolves around definitions in your `teller.yml` file:
+Remember, for this feature it still revolves around definitions in your `cellar.yml` file:
 
 ```bash
-$ teller put FOO_BAR=$MY_NEW_PASS --providers dotenv -c .teller.write.yml
+$ cellar put FOO_BAR=$MY_NEW_PASS --providers dotenv -c .cellar.write.yml
 ```
 
 A few notes:
@@ -355,7 +305,7 @@ A few notes:
 Sometimes you don't have a mapped key in your configuration file and want to perform an ad-hoc write, you can do that with `--path`:
 
 ```
-$ teller put SMTP_PASS=newpass --path secret/data/foo --providers hashicorp_vault
+$ cellar put SMTP_PASS=newpass --path secret/data/foo --providers hashicorp_vault
 ```
 
 A few notes:
@@ -365,12 +315,12 @@ A few notes:
 
 ## :x: Delete and multi-delete from providers
 
-Teller providers support _deleting_ values _from_ providers.
+Cellar providers support _deleting_ values _from_ providers.
 
-This feature revolves around definitions in your `teller.yml` file:
+This feature revolves around definitions in your `cellar.yml` file:
 
 ```bash
-$ teller delete FOO_BAR --providers dotenv -c .teller.yml
+$ cellar delete FOO_BAR --providers dotenv -c .cellar.yml
 ```
 
 A few notes:
@@ -378,7 +328,7 @@ A few notes:
 - You can specify multiple keys to delete, for example:
 
   ```bash
-  $ teller delete FOO BAR BAZ --providers dotenv
+  $ cellar delete FOO BAR BAZ --providers dotenv
   ```
 
 - The flag `--providers` lets you push to one or more providers at once
@@ -387,13 +337,13 @@ A few notes:
 Sometimes you don't have a mapped key in your configuration file and want to perform an ad-hoc delete. You can do that with the `--path` flag:
 
 ```bash
-$ teller delete FOO BAR --path ~/my-env-file.env --providers dotenv
+$ cellar delete FOO BAR --path ~/my-env-file.env --providers dotenv
 ```
 
 You can also delete all keys at once for a given path, without specifying them one by one:
 
 ```bash
-$ teller delete --all-keys --path ~/my-env-file.env --providers dotenv
+$ cellar delete --all-keys --path ~/my-env-file.env --providers dotenv
 ```
 
 ## :white_check_mark: Prompts and options
@@ -421,7 +371,7 @@ If you prefix a value with `env:` it will get pulled from your current environme
 You can export in a YAML format, suitable for [GCloud](https://cloud.google.com/functions/docs/env-var):
 
 ```
-$ teller yaml
+$ cellar yaml
 ```
 
 Example format:
@@ -436,7 +386,7 @@ KEY: VALUE
 You can export in a JSON format, suitable for piping through `jq` or other workflows:
 
 ```
-$ teller json
+$ cellar json
 ```
 
 Example format:
@@ -477,7 +427,7 @@ env:
 
 ### Remapping Provider Variables
 
-Providers which support syncing a list of keys and values can be remapped to different environment variable keys. Typically, when teller syncs paths from `env_sync`, the key returned from the provider is directly mapped to the environment variable key. In some cases it might be necessary to have the provider key mapped to a different variable without changing the provider settings. This can be useful when using `env_sync` for [Hashicorp Vault Dynamic Database credentials](https://www.vaultproject.io/docs/secrets/databases):
+Providers which support syncing a list of keys and values can be remapped to different environment variable keys. Typically, when cellar syncs paths from `env_sync`, the key returned from the provider is directly mapped to the environment variable key. In some cases it might be necessary to have the provider key mapped to a different variable without changing the provider settings. This can be useful when using `env_sync` for [Hashicorp Vault Dynamic Database credentials](https://www.vaultproject.io/docs/secrets/databases):
 
 ```yaml
 env_sync:
@@ -794,7 +744,7 @@ Requires an API key populated in your environment in: `VERCEL_TOKEN`.
 
 - Sync - `yes`
 - Mapping - `yes`
-- Modes - `read`, [write: accepting PR](https://github.com/spectralops/teller)
+- Modes - `read`, [write: accepting PR](https://github.com/crhuber/cellar)
 - Key format
   - `env_sync` - name of your Vercel app
   - `env` - the actual env variable name in your Vercel settings
@@ -836,7 +786,7 @@ cert_file: ""
 
 ### Features
 
-- Sync - `no` [sync: accepting PR](https://github.com/spectralops/teller)
+- Sync - `no` [sync: accepting PR](https://github.com/crhuber/cellar)
 - Mapping - `yes`
 - Modes - `read+write`
 - Key format
@@ -902,9 +852,9 @@ providers:
 ### Usage:
 
 ```sh
-$ teller put foo-secret=000000  --providers cloudflare_workers_secrets
-$ teller put foo-secret=123 foo-secret2=456 --providers cloudflare_workers_secrets --sync # take from env_sync for using the same source for multiple secrets
-$ teller delete foo-secret foo-secret2 --providers cloudflare_workers_secrets
+$ cellar put foo-secret=000000  --providers cloudflare_workers_secrets
+$ cellar put foo-secret=123 foo-secret2=456 --providers cloudflare_workers_secrets --sync # take from env_sync for using the same source for multiple secrets
+$ cellar delete foo-secret foo-secret2 --providers cloudflare_workers_secrets
 ```
 
 ### Authentication
@@ -991,7 +941,7 @@ Requires the following environment variables to be set:
 Example:
 
 ```sh
-OP_CONNECT_HOST="http://localhost:8080" OP_CONNECT_TOKEN=""  teller yaml
+OP_CONNECT_HOST="http://localhost:8080" OP_CONNECT_TOKEN=""  cellar yaml
 ```
 
 ## Gopass
@@ -1047,10 +997,10 @@ Requires the following environment variables to be set:
 ### Usage:
 
 ```sh
-$ teller put FROM_TELLER=00000 FROM_TELLER_2=00002 --providers github --sync # Add secrets with dynamic secrets name (take from env_sync)
-$ teller put FROM_TELLER=1111 FROM_TELLER_2=222 --providers github # Add defined secrets name from env key (YAML key will be the name of the secret)
-$ teller delete FROM_TELLER --providers github # Delete specific secret
-$ teller delete FROM_TELLER FROM_TELLER_2 --providers github --all-keys --path={OWNER}/{REPO-NAME} # Delete all repo secrets, limited to 100 secrets per repository
+$ cellar put FROM_CELLAR=00000 FROM_CELLAR_2=00002 --providers github --sync # Add secrets with dynamic secrets name (take from env_sync)
+$ cellar put FROM_CELLAR=1111 FROM_CELLAR_2=222 --providers github # Add defined secrets name from env key (YAML key will be the name of the secret)
+$ cellar delete FROM_CELLAR --providers github # Delete specific secret
+$ cellar delete FROM_CELLAR FROM_CELLAR_2 --providers github --all-keys --path={OWNER}/{REPO-NAME} # Delete all repo secrets, limited to 100 secrets per repository
 ```
 
 ### Authentication
@@ -1075,9 +1025,9 @@ providers:
     env_sync:
       path: owner/repo-name
     env:
-      FROM_TELLER:
+      FROM_CELLAR:
         path: owner/repo-name
-      FROM_TELLER_2:
+      FROM_CELLAR_2:
         path: owner/repo-name
 ```
 
@@ -1264,7 +1214,7 @@ That allows us to keep two important points:
 
 ## Developer Guide
 
-- [Add new provider](./doc/new-provider.md)
+- [Add new provider](./docs/new-provider.md)
 - Quick testing as you code: `make lint && make test`
 - Checking your work before PR, run also integration tests: `make integration`
 
@@ -1308,14 +1258,8 @@ Linting is treated as a form of testing (using `golangci`, configuration [here](
 $ make lint
 ```
 
-### Thanks:
 
-To all [Contributors](https://github.com/spectralops/teller/graphs/contributors) - you make this happen, thanks!
-
-### Code of conduct
-
-Teller follows [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md)
 
 # Copyright
 
-Copyright (c) 2021 [@jondot](http://twitter.com/jondot). See [LICENSE](LICENSE.txt) for further details.
+Copyright (c) 2021 [@crhuber] See [LICENSE](LICENSE.txt) for further details.

@@ -7,9 +7,9 @@ import (
 	"github.com/alecthomas/assert"
 	"github.com/golang/mock/gomock"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/providers/mock_providers"
 	"github.com/hashicorp/vault/api"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/providers/mock_providers"
 )
 
 func TestHashicorpVault(t *testing.T) {

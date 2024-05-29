@@ -13,10 +13,10 @@ import (
 	survey "github.com/AlecAivazis/survey/v2"
 	"github.com/samber/lo"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/utils"
 	"github.com/fatih/color"
 	"github.com/jftuga/ellipsis"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/utils"
 )
 
 type Porcelain struct {
@@ -98,7 +98,7 @@ func (p *Porcelain) PrintContext(projectName, loadedFrom string) {
 	green := color.New(color.FgGreen).SprintFunc()
 	white := color.New(color.FgWhite).SprintFunc()
 
-	fmt.Fprintf(p.Out, "-*- %s: loaded variables for %s using %s -*-\n", white("teller"), green(projectName), green(loadedFrom))
+	fmt.Fprintf(p.Out, "-*- %s: loaded variables for %s using %s -*-\n", white("cellar"), green(projectName), green(loadedFrom))
 }
 
 func (p *Porcelain) PrintEntries(entries []core.EnvEntry) {

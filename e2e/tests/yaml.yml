@@ -1,6 +1,6 @@
 ---
 name: yaml
-command: <binary-path> yaml 
+command: <binary-path> yaml
 config_content: >
   project: test
 
@@ -13,7 +13,7 @@ config_content: >
           path: {{.Folder}}/settings/test/foo
         BAR:
           path: {{.Folder}}/settings/test/bar
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 init_snapshot:
   - path: settings/test
     file_name: foo
@@ -38,4 +38,4 @@ expected_stdout: |
   secret-b: shazam
   secret-c: shazam-1
 
-expected_stderr: 
+expected_stderr:

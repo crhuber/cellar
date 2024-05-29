@@ -9,7 +9,7 @@ make e2e
 
 ## Create E2E test
 
-You have two different options to create an E2E test in Teller.
+You have two different options to create an E2E test in Cellar.
 
 ### Simple
 The simple and fast way is based on `yml` file configuration. All you need to do is create a *.yml file in [test folder](./tests/) with the following fields:
@@ -20,7 +20,7 @@ The simple and fast way is based on `yml` file configuration. All you need to do
 | `command`                     | Command to execute. You need to keep `<name>`; this placeholder will replace with the `BINARY_PATH` binary value.
 | `config_file_name`            | Configuration file name. If empty, the configuration file will not be created.
 | `config_content`              | Configuration file content.
-| `init_snapshot`               | List of files that were going to create before Teller binary is executed.
+| `init_snapshot`               | List of files that were going to create before Cellar binary is executed.
 | `init_snapshot.path`          | Create file in path.
 | `init_snapshot.file_name`     | File name.
 | `init_snapshot.content`       | File content.
@@ -29,8 +29,8 @@ The simple and fast way is based on `yml` file configuration. All you need to do
 | `expected_snapshot.path`      | Create file in path.
 | `expected_snapshot.file_name` | File name.
 | `expected_snapshot.content`   | File content.
-| `expected_stdout`             | Check if Teller stdout equals this value. If empty, this check will be ignored.
-| `expected_stderr`             | Check if Teller stderr equals this value. If empty, this check will be ignored.
+| `expected_stdout`             | Check if Cellar stdout equals this value. If empty, this check will be ignored.
+| `expected_stderr`             | Check if Cellar stderr equals this value. If empty, this check will be ignored.
 
 ### Advanced
 In case the E2E `yml`not flexible enough you have the option to create a `*.go` file in [test folder](./tests/). the go file most to:

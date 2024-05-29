@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 	"github.com/cyberark/conjur-api-go/conjurapi"
 	"github.com/cyberark/conjur-api-go/conjurapi/authn"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
 )
 
 type ResourceFilter struct {
@@ -29,7 +29,7 @@ type CyberArkConjur struct {
 
 const ConjurName = "cyberark_conjur"
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Description:    "CyberArk Conjure",

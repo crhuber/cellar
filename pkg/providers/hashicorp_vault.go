@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 	"github.com/hashicorp/vault/api"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
 )
 
 type HashicorpClient interface {
@@ -20,7 +20,7 @@ type HashicorpVault struct {
 
 const HashicorpVaultName = "hashicorp_vault"
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Description:    "Hashicorp Vault",

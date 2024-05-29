@@ -5,8 +5,8 @@ import (
 
 	"github.com/1Password/connect-sdk-go/connect"
 	"github.com/1Password/connect-sdk-go/onepassword"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
 )
 
 type OnePasswordClient interface {
@@ -21,7 +21,7 @@ type OnePassword struct {
 
 const OnePasswordName = "1password"
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Description: "1Password",
@@ -30,7 +30,7 @@ func init() {
 To integrate with the 1Password API, you should have system-to-system secret management running in your infrastructure/localhost [more details here](https://support.1password.com/connect-deploy-docker/).
 
 Requires the following environment variables to be set:
-` + "`OP_CONNECT_HOST`" + ` - The hostname of the 1Password Connect API	
+` + "`OP_CONNECT_HOST`" + ` - The hostname of the 1Password Connect API
 ` + "`OP_CONNECT_TOKEN`" + ` - The API token to be used to authenticate the client to a 1Password Connect API.
 `,
 		ConfigTemplate: `,

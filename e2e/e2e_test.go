@@ -10,9 +10,9 @@ import (
 
 	"testing"
 
-	"github.com/spectralops/teller/e2e/register"
-	_ "github.com/spectralops/teller/e2e/tests"
-	"github.com/spectralops/teller/e2e/testutils"
+	"github.com/crhuber/cellar/e2e/register"
+	_ "github.com/crhuber/cellar/e2e/tests"
+	"github.com/crhuber/cellar/e2e/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -118,7 +118,7 @@ func TestE2E(t *testing.T) { //nolint
 			err = testInstance.SetupTest()
 			assert.Nil(t, err)
 
-			// get Teller flags command
+			// get Cellar flags command
 			flags := testInstance.GetFlags()
 
 			stdout, stderr, err := testutils.ExecCmd(binaryPath, flags, tempFolder)

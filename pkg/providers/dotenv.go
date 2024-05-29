@@ -5,11 +5,11 @@ import (
 	"path"
 	"sort"
 
+	"github.com/crhuber/cellar/pkg/core"
+	"github.com/crhuber/cellar/pkg/logging"
+	"github.com/crhuber/cellar/pkg/utils"
 	"github.com/joho/godotenv"
 	"github.com/mitchellh/go-homedir"
-	"github.com/spectralops/teller/pkg/core"
-	"github.com/spectralops/teller/pkg/logging"
-	"github.com/spectralops/teller/pkg/utils"
 )
 
 const (
@@ -96,7 +96,7 @@ type Dotenv struct {
 	logger logging.Logger
 }
 
-//nolint
+// nolint
 func init() {
 	metaInfo := core.MetaInfo{
 		Description:    ".env",

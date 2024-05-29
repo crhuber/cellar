@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	core "github.com/spectralops/teller/pkg/core"
+	core "github.com/crhuber/cellar/pkg/core"
 )
 
 // MockKsmClient is a mock of KsmClient interface.

@@ -86,7 +86,7 @@ func (l *StandardLogger) SetCallerReporter() {
 //
 // Example:
 // logger :=log.WithFields(map[string]interface{}{"test": 2222})
-// logger.Info("Teller message") -> `INFO[0000] Teller message  test=2222`
+// logger.Info("Cellar message") -> `INFO[0000] Cellar message  test=2222`
 func (l *StandardLogger) WithFields(fields map[string]interface{}) Logger {
 	cp := *l
 	cp.fields = make(map[string]interface{})

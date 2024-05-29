@@ -1,7 +1,7 @@
 ---
 name: Show JSON entries
-command: <binary-path> json 
-config_file_name: .teller.yml
+command: <binary-path> json
+config_file_name: .cellar.yml
 config_content: >
   project: test
 
@@ -39,4 +39,4 @@ expected_stdout: >-
     "secret-b": "shazam",
     "secret-c": "shazam-1"
   }
-expected_stderr: 
+expected_stderr:

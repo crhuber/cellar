@@ -1,7 +1,7 @@
 ---
 name: redact input
 command: <binary-path> redact --in dirty
-config_file_name: .teller.yml
+config_file_name: .cellar.yml
 config_content: >
   project: redaction test
 

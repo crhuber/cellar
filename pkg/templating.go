@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"text/template"
 
-	"github.com/spectralops/teller/pkg/core"
+	"github.com/crhuber/cellar/pkg/core"
 )
 
 type Templating struct {
 }
 type viewmodel struct {
-	Teller *core.EnvEntryLookup
+	Cellar *core.EnvEntryLookup
 }
 
 func (t *Templating) New() *Templating {
@@ -29,7 +29,7 @@ func (t *Templating) ForTemplate(tmpl string, entries []core.EnvEntry) (string, 
 
 	var output bytes.Buffer
 
-	err = tt.Execute(&output, viewmodel{Teller: &lookup})
+	err = tt.Execute(&output, viewmodel{Cellar: &lookup})
 	if err != nil {
 		return "", err
 	}
