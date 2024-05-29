@@ -12,14 +12,14 @@ You can now use `cellar` or `clr` (if you like shortcuts!) in your terminal.
 
 `cellar` will pull variables from your various cloud providers, vaults and others, and will populate your current working session (in various ways!, see more below) so you can work safely and much more productively.
 
-`cellar` needs a cellarfile. This is a `.cellar.yml` file that lives in your repo, or one that you point cellar to with `cellar -c your-conf.yml`.
+`cellar` needs a cellarfile. This is a `.cellar.yaml` file that lives in your repo, or one that you point cellar to with `cellar -c your-conf.yaml`.
 
 
 ## Create your configuration
 
-Run `cellar new` and follow the wizard, pick the providers you like and it will generate a `.cellar.yml` for you.
+Run `cellar new` and follow the wizard, pick the providers you like and it will generate a `.cellar.yaml` for you.
 
-Alternatively, you can use the following minimal template or [view a full example](./docs/cellar.example.yml):
+Alternatively, you can use the following minimal template or [view a full example](./docs/cellar.example.yaml):
 
 ```yaml
 project: project_name
@@ -66,7 +66,7 @@ Manually exporting and setting up environment variables for running a process wi
 
 Got bitten by using `.env.production` and exposing it in the local project itself?
 
-Using `cellar` and a `.cellar.yml` file that exposes nothing to the prying eyes, you can work fluently and seamlessly with zero risk, also no need for quotes:
+Using `cellar` and a `.cellar.yaml` file that exposes nothing to the prying eyes, you can work fluently and seamlessly with zero risk, also no need for quotes:
 
 ```
 $ cellar run -- your-process arg1 arg2... --switch1 ...
@@ -122,7 +122,7 @@ run: cellar scan --silent
 
 It will break your build if it finds something (returns exit code `1`).
 
-Use Cellar for productively and securely running your processes and you get this for free -- nothing to configure. If you have data that you're bringing that you're sure isn't sensitive, flag it in your `cellar.yml`:
+Use Cellar for productively and securely running your processes and you get this for free -- nothing to configure. If you have data that you're bringing that you're sure isn't sensitive, flag it in your `cellar.yaml`:
 
 ```
 dotenv:
@@ -191,7 +191,7 @@ missing [] global-dotenv FB 3***** ??
 
 Use `mirror-drift --sync ...` in order to declare that the two providers should represent a completely synchronized mirror (all keys, all values).
 
-As always, the specific provider definitions are in your `cellar.yml` file.
+As always, the specific provider definitions are in your `cellar.yaml` file.
 
 ## :beetle: Detect secrets and value drift (graph links between providers)
 
@@ -225,7 +225,7 @@ providers:
 And run
 
 ```
-$ cellar graph-drift dotenv dotenv2 -c your-config.yml
+$ cellar graph-drift dotenv dotenv2 -c your-config.yaml
 ```
 
 ## :scroll: Populate templates
@@ -289,10 +289,10 @@ Notes:
 
 Cellar providers supporting _write_ use cases which allow writing values _into_ providers.
 
-Remember, for this feature it still revolves around definitions in your `cellar.yml` file:
+Remember, for this feature it still revolves around definitions in your `cellar.yaml` file:
 
 ```bash
-$ cellar put FOO_BAR=$MY_NEW_PASS --providers dotenv -c .cellar.write.yml
+$ cellar put FOO_BAR=$MY_NEW_PASS --providers dotenv -c .cellar.write.yaml
 ```
 
 A few notes:
@@ -317,10 +317,10 @@ A few notes:
 
 Cellar providers support _deleting_ values _from_ providers.
 
-This feature revolves around definitions in your `cellar.yml` file:
+This feature revolves around definitions in your `cellar.yaml` file:
 
 ```bash
-$ cellar delete FOO_BAR --providers dotenv -c .cellar.yml
+$ cellar delete FOO_BAR --providers dotenv -c .cellar.yaml
 ```
 
 A few notes:
@@ -1252,7 +1252,7 @@ $ make integration_api
 
 ### Linting
 
-Linting is treated as a form of testing (using `golangci`, configuration [here](.golangci.yml)), to run:
+Linting is treated as a form of testing (using `golangci`, configuration [here](.golangci.yaml)), to run:
 
 ```
 $ make lint

@@ -49,7 +49,7 @@ You're done! :rocket:
 Run the command `go run main.go new` and run through the flow in the wizard.
 Ensure that you see your provider in the `Select your secret providers` question.
 
-After the `cellar.yml` file is created, run the command `go run main.go yaml`, you should see the message :
+After the `cellar.yaml` file is created, run the command `go run main.go yaml`, you should see the message :
 
 ```sh
 FATA[0000] could not load all variables from the given existing providers  error="provider \"Example\" does not implement write yet"
