@@ -137,11 +137,7 @@ func main() {
 	// load or create new file
 	//
 	const (
-		// TODO add teller support
-		defaultCellarFile = ".cellar.yml"
-		// Alternative default cellar file, it uses official YAML extension
-		// See https://github.com/cellarops/cellar/issues/162
-		secondDefaultCellarFile = ".cellar.yaml"
+		defaultCellarFile = ".cellar.yaml"
 	)
 
 	cellaryml := defaultCellarFile
@@ -167,7 +163,13 @@ func main() {
 
 	clrfile, err := pkg.NewCellarFile(cellaryml)
 	if isDefaultFilePathErr(CLI.Config, err) {
-		clrfile, err = pkg.NewCellarFile(secondDefaultCellarFile)
+		alternateFiles := []string{".cellar.yml", ".teller.yml", ".teller.yaml"}
+		for _, file := range alternateFiles {
+			clrfile, err = pkg.NewCellarFile(file)
+			if err == nil {
+				break
+			}
+		}
 	}
 	if err != nil {
 		logger.WithError(err).WithField("file", cellaryml).Fatal("could not read file")
@@ -319,7 +321,7 @@ func main() {
 }
 
 func isDefaultFilePathErr(config string, err error) bool {
-	// Ignore if explicitly set to '.cellar.yml'.
+	// Ignore if explicitly set to '.cellar.yaml'.
 	if config != "" {
 		return false
 	}
